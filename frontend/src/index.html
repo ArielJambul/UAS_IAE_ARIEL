@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bengkel Online</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: red; font-size: 12px; display: none; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2 style="text-align:center;">Login Bengkel</h2>
+        
+        <div id="pesanError" class="error"></div>
+
+        <form id="formLogin">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" id="btnMasuk">Masuk</button>
+        </form>
+    </div>
+
+    <script>
+        // --- INI BAGIAN JAVASCRIPT (The Network Bridge) ---
+        
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Cegah halaman reload (karena kita mau SPA/Single Page App style)
+
+            // 1. Ambil data dari inputan
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('btnMasuk');
+            const errorDiv = document.getElementById('pesanError');
+
+            // Ubah tombol biar user tau lagi loading
+            btn.innerText = "Loading...";
+            btn.disabled = true;
+            errorDiv.style.display = 'none';
+
+            // 2. SIAPKAN DATA JSON
+            const dataKirim = {
+                username: user,
+                password: pass
+            };
+
+            try {
+                // 3. NGOBROL SAMA BACKEND (FETCH API)
+                // Kita "telepon" backend di localhost port 8000
+                const response = await fetch('http://localhost:8000/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataKirim) // Data dikirim sebagai teks JSON
+                });
+
+                // 4. TERIMA JAWABAN DARI KOKI (BACKEND)
+                const hasil = await response.json();
+
+                if(hasil.status == 'success') {
+                    // LOGIN BERHASIL!
+                    alert("Login Berhasil! Selamat datang " + hasil.data.username);
+                    
+                    // Simpan data user di Browser (Local Storage) pengganti Session PHP
+                    localStorage.setItem('user_id', hasil.data.id);
+                    localStorage.setItem('role', hasil.data.role);
+                    localStorage.setItem('username', hasil.data.username);
+
+                    // Pindah ke Dashboard (Kita buat nanti)
+                    if(hasil.data.role == 'admin') {
+                        window.location.href = 'admin_dashboard.html';
+                    } else {
+                        window.location.href = 'user_dashboard.html';
+                    }
+                } else {
+                    // LOGIN GAGAL
+                    errorDiv.innerText = hasil.message; // Tampilkan pesan error dari backend
+                    errorDiv.style.display = 'block';
+                }
+
+            } catch (err) {
+                console.error("Error Network:", err);
+                errorDiv.innerText = "Gagal menghubungi server backend!";
+                errorDiv.style.display = 'block';
+            }
+
+            // Kembalikan tombol seperti semula
+            btn.innerText = "Masuk";
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>

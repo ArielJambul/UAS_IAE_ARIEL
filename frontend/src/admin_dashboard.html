@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #333; } /* Background Gelap biar beda sama user */
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #343a40; color: white; }
+        
+        /* Dropdown & Tombol */
+        select { padding: 5px; border-radius: 4px; }
+        .btn-update { background: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; margin-left: 5px; }
+        .btn-update:hover { background: #0056b3; }
+        .btn-logout { background: #dc3545; color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>🔧 Dashboard Admin</h2>
+        <a href="#" onclick="logout()" class="btn-logout">Logout</a>
+    </div>
+
+    <h3>Daftar Antrian Masuk</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Pelanggan</th>
+                <th>Motor & Keluhan</th>
+                <th>Status Saat Ini</th>
+                <th>Aksi (Update)</th>
+            </tr>
+        </thead>
+        <tbody id="tabelAdmin">
+            <tr><td colspan="5" align="center">Loading data...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // 1. CEK APAKAH BENAR ADMIN?
+    const role = localStorage.getItem('role');
+    if (role !== 'admin') {
+        alert("Anda bukan admin! Minggir!");
+        window.location.href = "index.html";
+    }
+
+    // 2. LOAD DATA DARI API ADMIN
+    loadAdminData();
+
+    async function loadAdminData() {
+        try {
+            const response = await fetch('http://localhost:8000/api_admin_bookings.php');
+            const hasil = await response.json();
+            const tbody = document.getElementById('tabelAdmin');
+            tbody.innerHTML = "";
+
+            if(hasil.status == 'success') {
+                let no = 1;
+                hasil.data.forEach(item => {
+                    // Logic milih dropdown
+                    let selectHTML = `
+                        <select id="status-${item.id}">
+                            <option value="Pending" ${item.status=='Pending'?'selected':''}>Pending</option>
+                            <option value="Diproses" ${item.status=='Diproses'?'selected':''}>Diproses</option>
+                            <option value="Selesai" ${item.status=='Selesai'?'selected':''}>Selesai</option>
+                            <option value="Dibatalkan" ${item.status=='Dibatalkan'?'selected':''}>Dibatalkan</option>
+                        </select>
+                        <button class="btn-update" onclick="updateStatus(${item.id})">Simpan</button>
+                    `;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${no++}</td>
+                            <td><b>${item.nama_lengkap}</b></td>
+                            <td>
+                                ${item.jenis_kendaraan} (${item.nopol})<br>
+                                <small><i>"${item.keluhan}"</i></small>
+                            </td>
+                            <td style="font-weight:bold;">${item.status}</td>
+                            <td>${selectHTML}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = "<tr><td colspan='5' align='center'>Belum ada booking masuk.</td></tr>";
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // 3. FUNGSI UPDATE STATUS
+    async function updateStatus(idBooking) {
+        // Ambil nilai dari dropdown spesifik baris itu
+        const statusBaru = document.getElementById('status-' + idBooking).value;
+
+        try {
+            const response = await fetch('http://localhost:8000/api_update_status.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id_booking: idBooking, status_baru: statusBaru })
+            });
+            const hasil = await response.json();
+
+            if(hasil.status == 'success') {
+                alert("Status berhasil diperbarui!");
+                loadAdminData(); // Refresh tabel biar status update
+            } else {
+                alert("Gagal update");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error koneksi");
+        }
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>

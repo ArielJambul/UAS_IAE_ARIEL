@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard User</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px;}
+        
+        /* Form Styling */
+        .form-box { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { background: #28a745; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; border-radius: 4px; }
+        .btn-submit:hover { background: #218838; }
+
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: #007bff; color: white; }
+        
+        .badge { padding: 5px 10px; border-radius: 4px; color: white; font-size: 12px; font-weight: bold; }
+        .bg-Pending { background: orange; }
+        .bg-Diproses { background: blue; }
+        .bg-Selesai { background: green; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2 id="welcomeMsg">Halo, User!</h2>
+        <button onclick="logout()" style="background:red; color:white; border:none; padding:8px 15px; cursor:pointer; border-radius:4px;">Logout</button>
+    </div>
+
+    <div class="form-box">
+        <h3>🛠️ Tambah Booking Baru</h3>
+        <form id="formBooking">
+            <label>Jenis Kendaraan</label>
+            <select id="jenis" required>
+                <option value="Motor Bebek">Motor Bebek</option>
+                <option value="Motor Matic">Motor Matic</option>
+                <option value="Motor Sport">Motor Sport</option>
+            </select>
+
+            <label>Nomor Polisi</label>
+            <input type="text" id="nopol" placeholder="B 1234 ABC" required>
+
+            <label>Keluhan</label>
+            <textarea id="keluhan" rows="2" placeholder="Rem blong, ganti oli..." required></textarea>
+
+            <label>Tanggal Rencana</label>
+            <input type="date" id="tanggal" required>
+
+            <button type="submit" class="btn-submit">Kirim Booking</button>
+        </form>
+    </div>
+
+    <h3>📜 Riwayat Servis Saya</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Info Motor</th>
+                <th>Keluhan</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="tabelBody">
+            <tr><td colspan="4" align="center">Sedang memuat data...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // --- CEK LOGIN ---
+    const userId = localStorage.getItem('user_id');
+    const username = localStorage.getItem('username');
+
+    if (!userId) {
+        alert("Sesi habis, silakan login lagi.");
+        window.location.href = "index.html";
+    } else {
+        document.getElementById('welcomeMsg').innerText = "Halo, " + username + "!";
+        loadData(); // Load data tabel saat halaman dibuka
+    }
+
+    // --- LOGIKA KIRIM BOOKING (CREATE) ---
+    document.getElementById('formBooking').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Jangan refresh halaman
+
+        const dataKirim = {
+            user_id: userId,
+            jenis_kendaraan: document.getElementById('jenis').value,
+            nopol: document.getElementById('nopol').value,
+            keluhan: document.getElementById('keluhan').value,
+            tanggal_booking: document.getElementById('tanggal').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/api_tambah_booking.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(dataKirim)
+            });
+            
+            const hasil = await response.json();
+            
+            if(hasil.status == 'success') {
+                alert("Booking Berhasil!");
+                document.getElementById('formBooking').reset(); // Kosongkan form
+                loadData(); // Refresh tabel otomatis
+            } else {
+                alert("Gagal: " + hasil.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Gagal koneksi ke server!");
+        }
+    });
+
+    // --- LOGIKA AMBIL DATA TABEL (READ) ---
+    async function loadData() {
+        try {
+            const response = await fetch('http://localhost:8000/api_bookings.php?user_id=' + userId);
+            const hasil = await response.json();
+            const tbody = document.getElementById('tabelBody');
+            tbody.innerHTML = "";
+
+            if(hasil.status == 'success') {
+                let no = 1;
+                hasil.data.forEach(item => {
+                    let badge = 'bg-' + item.status; 
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${no++}</td>
+                            <td><b>${item.jenis_kendaraan}</b><br><small>${item.nopol}</small><br><small>${item.tanggal_booking}</small></td>
+                            <td>${item.keluhan}</td>
+                            <td><span class="badge ${badge}">${item.status}</span></td>
+                        </tr>`;
+                });
+            } else {
+                tbody.innerHTML = "<tr><td colspan='4' align='center'>Belum ada data.</td></tr>";
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>

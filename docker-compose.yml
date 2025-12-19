@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # 1. DATABASE SERVICE
+  bengkel_db:
+    image: mysql:5.7
+    container_name: bengkel_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bengkel_db
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # 2. PHPMYADMIN (Untuk cek database)
+  bengkel_pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: bengkel_pma
+    environment:
+      PMA_HOST: bengkel_db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - bengkel_db
+
+  # 3. WEB SERVER UTAMA (Aplikasi Bengkel)
+  bengkel_web:
+    build:
+      context: .              # Konteks tetap di root folder
+      dockerfile: src/Dockerfile  # <--- INI PERBAIKANNYA (Arahkan ke dalam folder src)
+    container_name: bengkel_web
+    ports:
+      - "80:80"               # Akses lewat http://localhost
+    volumes:
+      - ./src:/var/www/html   # Sinkron folder src laptop ke container
+    depends_on:
+      - bengkel_db
+    links:
+      - bengkel_db
+
+volumes:
+  db_data:
