@@ -1,14 +1,15 @@
 <?php
-// Hostname sesuaikan dengan nama service DB di docker-compose.yml
-// Kalau di gambar awal kamu namanya 'bengkel_db', pakai itu.
-$host = "bengkel_db"; 
-$user = "root";
-$pass = "root"; // Password sesuaikan dengan MYSQL_ROOT_PASSWORD di docker-compose
-$db   = "bengkel_db"; // Nama database yang kamu buat
+// PENTING: Hostname harus sama dengan nama service di docker-compose ("bengkel_db")
+$servername = "bengkel_db"; 
+$username = "root";
+$password = "root";
+$dbname = "bengkel_db";
 
-$koneksi = mysqli_connect($host, $user, $pass, $db);
+// Membuat koneksi
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-if (!$koneksi) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+// Cek koneksi
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
 }
 ?>
