@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  # 1. DATABASE (MySQL)
+  # 1. DATABASE
   bengkel_db:
     image: mysql:5.7
     container_name: bengkel_db
@@ -12,10 +10,11 @@ services:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Load script SQL otomatis
     networks:
       - app_network
 
-  # 2. BACKEND (PHP Apache)
+  # 2. BACKEND
   backend:
     build: ./backend
     container_name: app_backend
@@ -26,7 +25,7 @@ services:
     networks:
       - app_network
 
-  # 3. FRONTEND (React + Nginx)
+  # 3. FRONTEND
   frontend:
     build: ./frontend
     container_name: app_frontend
