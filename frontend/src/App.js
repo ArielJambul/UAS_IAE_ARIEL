@@ -1,32 +1,28 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [data, setData] = useState(null);
+  const [message, setMessage] = useState("Loading...");
 
-  // Coba ambil data dari backend saat halaman dibuka
   useEffect(() => {
-    fetch('http://localhost:5000/')
-      .then(response => response.json())
-      .then(json => setData(json))
-      .catch(error => console.error('Error fetching data:', error));
+    // URL ini mengarah ke Backend PHP di port 5000
+    fetch('http://localhost:5000/src/api_bookings.php')
+      .then(response => response.text())
+      .then(data => {
+        console.log("Data dari backend:", data);
+        setMessage("Koneksi ke Backend Berhasil! (Cek Console)");
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        setMessage("Gagal terhubung ke backend.");
+      });
   }, []);
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Aplikasi Bengkel (Frontend)</h1>
-      <p>Status Koneksi ke Backend:</p>
-      
-      {data ? (
-        // Jika berhasil connect ke backend
-        <div style={{ color: 'green', border: '1px solid green', padding: '10px' }}>
-          <h3>{data.message}</h3>
-        </div>
-      ) : (
-        // Jika masih loading atau error
-        <p style={{ color: 'red' }}>Menghubungkan ke Backend...</p>
-      )}
+      <h1>Frontend Bengkel</h1>
+      <h3>Status: {message}</h3>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
