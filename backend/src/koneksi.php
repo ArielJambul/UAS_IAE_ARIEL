@@ -1,16 +1,23 @@
 <?php
-// Hostname HARUS 'bengkel_db' (sesuai nama service di docker-compose)
-$servername = "bengkel_db"; 
-$username = "root";
-$password = "root";
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
+
+// host.docker.internal = Alamat Laptop (XAMPP) dari dalam Docker
+$servername = "host.docker.internal"; 
+
+// Username XAMPP (Default)
+$username = "root"; 
+
+// Password XAMPP (Default KOSONG)
+// Hapus isinya, biarkan string kosong ""
+$password = ""; 
+
 $dbname = "bengkel_db";
 
-// Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Cek koneksi
 if ($conn->connect_error) {
-    // Return error sebagai JSON agar tidak merusak frontend
-    die(json_encode(["status" => "error", "message" => "Koneksi gagal: " . $conn->connect_error]));
+    // Ini akan muncul di Inspect Element jika gagal
+    die(json_encode(["status" => "error", "message" => "Gagal Konek XAMPP: " . $conn->connect_error]));
 }
 ?>

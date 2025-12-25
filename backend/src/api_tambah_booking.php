@@ -1,16 +1,18 @@
 <?php
-// 1. Header Wajib API
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 include 'koneksi.php';
 
-// 2. Terima Data JSON dari Frontend
-$inputJSON = file_get_contents('php://input');
-$data = json_decode($inputJSON, true);
+$data = json_decode(file_get_contents('php://input'), true);
 
-// Cek apakah data lengkap?
 if(!isset($data['user_id']) || !isset($data['nopol'])) {
     echo json_encode(["status" => "error", "message" => "Data tidak lengkap!"]);
     exit;
@@ -21,11 +23,14 @@ $jenis = $data['jenis_kendaraan'];
 $nopol = $data['nopol'];
 $keluhan = $data['keluhan'];
 $tanggal = $data['tanggal_booking'];
-$status = "Pending"; // Default status
+$status = "Pending";
 
-// 3. Masukkan ke Database
-$query = "INSERT INTO bookings (user_id, jenis_kendaraan, nopol, keluhan, tanggal_booking, status) 
-          VALUES ('$user_id', '$jenis', '$nopol', '$keluhan', '$tanggal', '$status')";
+// LOGIKA BARU: Cek apakah user memilih paket servis (service_id)
+// Jika service_id ada isinya, masukkan. Jika kosong, set NULL (manual).
+$service_id = (isset($data['service_id']) && $data['service_id'] != "") ? "'".$data['service_id']."'" : "NULL";
+
+$query = "INSERT INTO bookings (user_id, service_id, jenis_kendaraan, nopol, keluhan, tanggal_booking, status) 
+          VALUES ('$user_id', $service_id, '$jenis', '$nopol', '$keluhan', '$tanggal', '$status')";
 
 if ($conn->query($query) === TRUE) {
     echo json_encode(["status" => "success", "message" => "Booking berhasil disimpan!"]);
