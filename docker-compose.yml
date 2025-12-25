@@ -1,32 +1,64 @@
 version: '3.8'
 
 services:
-  # 1. FRONTEND (React) - Port 8080
-  frontend:
-    build: ./frontend
-    container_name: app_frontend
+  # 1. DATABASE (MySQL)
+  database:
+    image: mysql:5.7
+    container_name: app_database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "8080:80"
-    depends_on:
-      - backend
+      - "${DB_PORT}:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app_network
 
-  # 2. BACKEND (PHP) - Port 5000
+  # 2. BACKEND (PHP)
   backend:
     build: ./backend
     container_name: app_backend
     ports:
-      - "5000:80"
-    # extra_hosts: Ini trik agar Docker Linux bisa panggil host.docker.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "${BACKEND_PORT}:80"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      - database
     networks:
       - app_network
     volumes:
       - ./backend/src:/var/www/html
 
-# Network biar Frontend & Backend bisa ngobrol
+  # 3. FRONTEND (React)
+  frontend:
+    build: ./frontend
+    container_name: app_frontend
+    ports:
+      - "${APP_PORT}:80"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+  # 4. PHPMYADMIN (Database Manager)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: app_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_PASS}
+    depends_on:
+      - database
+    networks:
+      - app_network
+
 networks:
   app_network:
     driver: bridge

@@ -56,6 +56,7 @@ if ($result->num_rows > 0) {
             "message" => "Login Berhasil",
             "data" => [
                 "id" => $row['id'],
+                "nama_lengkap" => $row['nama_lengkap'],
                 "username" => $row['username'],
                 "role" => $row['role']
             ]
