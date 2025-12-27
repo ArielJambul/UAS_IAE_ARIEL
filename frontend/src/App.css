@@ -1,11 +1,14 @@
-/* --- PREMIUM BRAND THEME (Inspired by Shell/Yamaha) --- */
+/* --- PREMIUM FAMILY OTO THEME (Royal Blue / Cool Grey / Bright Orange) --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap');
 
 :root {
-  --brand-red: #DA291C;
-  --brand-yellow: #FFD700;
+  --brand-primary: #1050b5;
+  /* Royal Blue */
+  --brand-accent: #ff7f00;
+  /* Bright Orange */
   --brand-black: #1a1a1a;
-  --brand-grey: #f4f5f7;
+  --brand-grey: #f8f9fa;
+  /* Cool Grey */
   --surface: #ffffff;
   --text-main: #2d2d2d;
   --text-muted: #666666;
@@ -106,25 +109,39 @@ h6 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--brand-red) 0%, #b31b1b 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #0a1120 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(218, 41, 28, 0.3);
+  box-shadow: 0 4px 15px rgba(20, 33, 61, 0.3);
 }
 
 .btn-primary:hover {
   transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(218, 41, 28, 0.4);
+  box-shadow: 0 6px 20px rgba(20, 33, 61, 0.4);
 }
 
+.btn-accent {
+  background: linear-gradient(135deg, var(--brand-accent) 0%, #e08e00 100%);
+  color: var(--brand-primary);
+  /* Dark text on bright amber for contrast */
+  box-shadow: 0 4px 15px rgba(252, 163, 17, 0.3);
+}
+
+.btn-accent:hover {
+  transform: scale(1.02);
+  background: #ffb03b;
+  box-shadow: 0 6px 20px rgba(252, 163, 17, 0.4);
+}
+
+/* Legacy support if needed, mapped to accent */
 .btn-secondary {
-  background: var(--brand-yellow);
-  color: var(--brand-black);
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+  background: var(--brand-grey);
+  color: var(--brand-primary);
+  border: 2px solid var(--brand-primary);
 }
 
 .btn-secondary:hover {
   transform: scale(1.02);
-  background: #ffe44d;
+  background: #eef2f8;
 }
 
 .btn-outline {
@@ -134,15 +151,15 @@ h6 {
 }
 
 .btn-outline:hover {
-  border-color: var(--brand-black);
-  color: var(--brand-black);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
   background: white;
 }
 
 .btn-outline.active {
-  border-color: var(--brand-red);
-  color: var(--brand-red);
-  background: #fff5f5;
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  background: #f0f4ff;
 }
 
 .btn-block {
@@ -179,7 +196,7 @@ h6 {
   font-family: 'Poppins', sans-serif;
   font-weight: 800;
   font-size: 1.5rem;
-  color: var(--brand-red);
+  color: var(--brand-primary);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -191,7 +208,7 @@ h6 {
 
 /* --- HERO SECTION --- */
 .hero {
-  background: linear-gradient(135deg, var(--brand-black) 0%, #2c2c2c 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #000000 100%);
   color: white;
   padding: 80px 20px;
   text-align: center;
@@ -208,7 +225,7 @@ h6 {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(218, 41, 28, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
   pointer-events: none;
 }
 
@@ -219,7 +236,7 @@ h6 {
 
 .hero p {
   font-size: 1.2rem;
-  opacity: 0.8;
+  opacity: 0.9;
   max-width: 600px;
   margin: 0 auto 30px auto;
 }
@@ -241,13 +258,13 @@ h6 {
 .service-card {
   position: relative;
   padding: 25px;
-  border-top: 5px solid var(--brand-red);
+  border-top: 5px solid var(--brand-primary);
 }
 
 .service-price {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--brand-red);
+  color: var(--brand-primary);
   margin-top: 15px;
   display: block;
 }
@@ -279,9 +296,9 @@ h6 {
 
 .form-control:focus {
   outline: none;
-  border-color: var(--brand-red);
+  border-color: var(--brand-primary);
   background: white;
-  box-shadow: 0 0 0 4px rgba(218, 41, 28, 0.1);
+  box-shadow: 0 0 0 4px rgba(16, 80, 181, 0.1);
 }
 
 /* --- AUTH PAGE --- */

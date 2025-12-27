@@ -28,11 +28,11 @@ function App() {
       {/* GLOBAL NAVBAR */}
       <nav className="navbar">
         <div className="container nav-content">
-          <div className="logo">BENGKEL<span>ONLINE</span></div>
+          <div className="logo">ARIEL'S<span>WORKSHOP</span></div>
           {user && (
             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
               <span style={{ fontWeight: '500' }}>Halo, {user.nama_lengkap}</span>
-              <button onClick={handleLogout} className="btn btn-sm btn-outline">Logout</button>
+              <button onClick={handleLogout} className="btn btn-sm btn-primary">Logout</button>
             </div>
           )}
         </div>
@@ -67,10 +67,10 @@ function LandingPage({ setView }) {
     <div>
       <div className="hero animate-fade-up">
         <div className="container">
-          <h1>Servis Motor Profesional</h1>
-          <p>Layanan servis terbaik dengan mekanik handal dan sparepart original. Cepat, transparan, dan terpercaya.</p>
+          <h1>Expert Care, Any Wheel</h1>
+          <p>Bengkel profesional untuk Mobil dan Motor. Layanan cepat, presisi, dan terpercaya dengan mekanik ahli.</p>
           <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-            <button className="btn btn-primary" onClick={() => setView('login_user')}>Mulai Booking</button>
+            <button className="btn btn-outline" style={{ color: 'white', borderColor: 'white' }} onClick={() => setView('login_user')}>Booking Sekarang</button>
             <button className="btn btn-outline" style={{ color: 'white', borderColor: 'white' }} onClick={() => setView('login_admin')}>Staff Login</button>
           </div>
         </div>
@@ -80,19 +80,16 @@ function LandingPage({ setView }) {
         <h3 className="text-center mb-20" style={{ opacity: 0.6 }}>MENGAPA KAMI?</h3>
         <div className="grid-3">
           <div className="card text-center">
-            <h2>🛠️</h2>
-            <h3>Mekanik Handal</h3>
-            <p style={{ color: '#666' }}>Tim profesional bersertifikat resmi.</p>
+            <h3>Mekanik Profesional</h3>
+            <p style={{ color: '#666' }}>Tim ahli berpengalaman untuk menangani berbagai jenis kendaraan.</p>
           </div>
           <div className="card text-center">
-            <h2>⚡</h2>
-            <h3>Proses Cepat</h3>
-            <p style={{ color: '#666' }}>Sistem booking online tanpa antri lama.</p>
+            <h3>Layanan Cepat</h3>
+            <p style={{ color: '#666' }}>Proses pengerjaan efisien tanpa mengurangi kualitas.</p>
           </div>
           <div className="card text-center">
-            <h2>🏷️</h2>
-            <h3>Harga Transparan</h3>
-            <p style={{ color: '#666' }}>Tidak ada biaya tersembunyi.</p>
+            <h3>Booking Anti Ribet</h3>
+            <p style={{ color: '#666' }}>Kemudahan penjadwalan servis melalui sistem online.</p>
           </div>
         </div>
       </div>
@@ -117,7 +114,7 @@ function RegisterForm({ setView }) {
       <div className="form-group"><label>Username</label><input className="form-control" required onChange={e => setForm({ ...form, username: e.target.value })} /></div>
       <div className="form-group"><label>Password</label><input type="password" className="form-control" required onChange={e => setForm({ ...form, password: e.target.value })} /></div>
       <button className="btn btn-primary btn-block">Daftar Sekarang</button>
-      <div className="text-center mt-20"><span className="btn-link" onClick={() => setView('login_user')}>Sudah punya akun? Login</span></div>
+      <div className="text-center mt-20"><span className="btn-link" onClick={() => setView('login_user')} style={{ cursor: 'pointer', color: 'var(--brand-primary)' }}>Sudah punya akun? Login</span></div>
     </form>
   );
 }
@@ -164,7 +161,7 @@ function AdminLoginForm({ setUser, setView }) {
       {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
       <div className="form-group"><label>Username</label><input className="form-control" onChange={e => setForm({ ...form, username: e.target.value })} /></div>
       <div className="form-group"><label>Password</label><input type="password" className="form-control" onChange={e => setForm({ ...form, password: e.target.value })} /></div>
-      <button className="btn btn-secondary btn-block">Masuk Dashboard</button>
+      <button className="btn btn-primary btn-block">Masuk Dashboard</button>
     </form>
   );
 }
@@ -184,7 +181,7 @@ function UserDashboard({ user }) {
       <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', justifyContent: 'center' }}>
         <button onClick={() => setTab('booking')} className={`btn ${tab === 'booking' ? 'btn-primary' : 'btn-outline'}`}>Booking</button>
         <button onClick={() => setTab('queue')} className={`btn ${tab === 'queue' ? 'btn-primary' : 'btn-outline'}`}>Antrian Live</button>
-        <button onClick={() => setTab('katalog')} className={`btn ${tab === 'katalog' ? 'btn-primary' : 'btn-outline'}`}>Harga</button>
+        <button onClick={() => setTab('katalog')} className={`btn ${tab === 'katalog' ? 'btn-primary' : 'btn-outline'}`}>Harga & Layanan</button>
       </div>
       {tab === 'booking' && <UserBookingManager user={user} preSelectedService={selectedPkg} clearSelection={() => setSelectedPkg(null)} />}
       {tab === 'queue' && <UserLiveQueue />}
@@ -228,11 +225,11 @@ function UserLiveQueue() {
   };
   return (
     <div className="card">
-      <h3 className="mb-20">🚦 Monitor Antrian</h3>
+      <h3 className="mb-20">Monitor Antrian Bengkel</h3>
       <table className="table">
         <thead><tr><th>Nopol</th><th>Kendaraan</th><th>Status</th></tr></thead>
         <tbody>
-          {queue.length === 0 ? <tr><td colSpan="3">Sepi bos.</td></tr> : queue.map((item, i) => (
+          {queue.length === 0 ? <tr><td colSpan="3">Antrian kosong.</td></tr> : queue.map((item, i) => (
             <tr key={i}>
               <td style={{ fontWeight: 'bold' }}>{item.nopol}</td>
               <td>{item.jenis_kendaraan}<br /><small>{item.keluhan}</small></td>
@@ -251,7 +248,7 @@ function UserBookingManager({ user, preSelectedService, clearSelection }) {
   const [mode, setMode] = useState('paket');
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const defaultForm = { jenis_kendaraan: 'Motor Bebek', nopol: '', keluhan: '', tanggal_booking: '', service_id: '' };
+  const defaultForm = { jenis_kendaraan: 'City Car / Kecil', nopol: '', keluhan: '', tanggal_booking: '', service_id: '' };
   const [form, setForm] = useState(defaultForm);
 
   // Load Services & History
@@ -319,22 +316,36 @@ function UserBookingManager({ user, preSelectedService, clearSelection }) {
   return (
     <div className="grid-2">
       <div className="card">
-        <h3>{isEditing ? '✏️ Edit Booking' : 'Booking Baru'}</h3>
+        <h3>{isEditing ? 'Edit Booking' : 'Booking Service Baru'}</h3>
         <div style={{ display: 'flex', gap: '20px', margin: '20px 0' }}>
           <label style={{ cursor: 'pointer' }}><input type="radio" name="mode" checked={mode === 'paket'} onChange={() => setMode('paket')} /> Paket Servis</label>
-          <label style={{ cursor: 'pointer' }}><input type="radio" name="mode" checked={mode === 'manual'} onChange={() => setMode('manual')} /> Manual</label>
+          <label style={{ cursor: 'pointer' }}><input type="radio" name="mode" checked={mode === 'manual'} onChange={() => setMode('manual')} /> Manual / Keluhan Lain</label>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="grid-2" style={{ gap: '15px', marginBottom: '0' }}>
-            <div className="form-group"><label>Jenis</label><select className="form-control" value={form.jenis_kendaraan} onChange={e => setForm({ ...form, jenis_kendaraan: e.target.value })}><option>Motor Bebek</option><option>Motor Matic</option><option>Motor Sport</option></select></div>
-            <div className="form-group"><label>Nopol</label><input className="form-control" value={form.nopol} onChange={e => setForm({ ...form, nopol: e.target.value })} required /></div>
+            <div className="form-group">
+              <label>Jenis Kendaraan</label>
+              <select className="form-control" value={form.jenis_kendaraan} onChange={e => setForm({ ...form, jenis_kendaraan: e.target.value })}>
+                <optgroup label="Mobil">
+                  <option value="City Car / Kecil">City Car / Kecil</option>
+                  <option value="MPV / Keluarga">MPV / Keluarga</option>
+                  <option value="SUV / Sedan / Besar">SUV / Sedan / Besar</option>
+                </optgroup>
+                <optgroup label="Motor">
+                  <option value="Matic Kecil & Bebek (< 125cc)">Matic Kecil & Bebek (&lt; 125cc)</option>
+                  <option value="Matic Besar & Sport (150cc)">Matic Besar & Sport (150cc)</option>
+                  <option value="Moge & Sport Premium (> 250cc)">Moge & Sport Premium (&gt; 250cc)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div className="form-group"><label>Nopol</label><input className="form-control" value={form.nopol} onChange={e => setForm({ ...form, nopol: e.target.value })} required placeholder="B 1234 XYZ" /></div>
           </div>
-          <div className="form-group"><label>Tanggal</label><input type="date" className="form-control" value={form.tanggal_booking} onChange={e => setForm({ ...form, tanggal_booking: e.target.value })} required /></div>
+          <div className="form-group"><label>Tanggal Rencana</label><input type="date" className="form-control" value={form.tanggal_booking} onChange={e => setForm({ ...form, tanggal_booking: e.target.value })} required /></div>
 
           {mode === 'paket' ? (
-            <div className="form-group"><label>Layanan</label><select className="form-control" value={form.service_id} required onChange={e => setForm({ ...form, service_id: e.target.value })}><option value="">Pilih...</option>{services.map(s => (<option key={s.id} value={s.id}>{s.nama_layanan} - Rp {parseInt(s.harga).toLocaleString()}</option>))}</select></div>
+            <div className="form-group"><label>Pilih Layanan</label><select className="form-control" value={form.service_id} required onChange={e => setForm({ ...form, service_id: e.target.value })}><option value="">-- Pilih Paket --</option>{services.map(s => (<option key={s.id} value={s.id}>{s.nama_layanan} - Rp {parseInt(s.harga).toLocaleString()}</option>))}</select></div>
           ) : (
-            <div className="form-group"><label>Keluhan</label><textarea className="form-control" rows="3" value={form.keluhan} required onChange={e => setForm({ ...form, keluhan: e.target.value })} /></div>
+            <div className="form-group"><label>Keluhan / Catatan</label><textarea className="form-control" rows="3" value={form.keluhan} required onChange={e => setForm({ ...form, keluhan: e.target.value })} /></div>
           )}
 
           <button className="btn btn-primary btn-block">{isEditing ? 'Simpan Perubahan' : 'Kirim Booking'}</button>
@@ -343,10 +354,10 @@ function UserBookingManager({ user, preSelectedService, clearSelection }) {
       </div>
 
       <div className="card">
-        <h3>Riwayat Saya</h3>
+        <h3>Riwayat Booking Saya</h3>
         <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
           <table className="table">
-            <thead><tr><th>Motor</th><th>Status</th><th>#</th></tr></thead>
+            <thead><tr><th>Kendaraan</th><th>Status</th><th>#</th></tr></thead>
             <tbody>
               {bookings.length === 0 ? <tr><td colSpan="3">Belum ada history.</td></tr> : bookings.map(b => (
                 <tr key={b.id}>
@@ -365,7 +376,7 @@ function UserBookingManager({ user, preSelectedService, clearSelection }) {
                         <button
                           onClick={() => handleDelete(b.id, b.status)}
                           className="btn btn-sm btn-outline"
-                          style={{ borderColor: 'var(--brand-red)', color: 'var(--brand-red)', fontSize: '0.75rem', padding: '5px 10px' }}
+                          style={{ borderColor: 'var(--brand-primary)', color: 'var(--brand-primary)', fontSize: '0.75rem', padding: '5px 10px' }}
                         >
                           Batalkan
                         </button>
@@ -461,7 +472,7 @@ function AdminManageServices() {
             {services.map(s => (
               <tr key={s.id}>
                 <td>{s.nama_layanan}<br /><small>{s.deskripsi}</small><br /><b>Rp {parseInt(s.harga).toLocaleString()}</b></td>
-                <td><button onClick={() => { setIsEditing(true); setEditId(s.id); setForm(s); }} className="btn btn-sm btn-outline">✏️</button> <button onClick={() => handleDelete(s.id)} className="btn btn-sm btn-danger">🗑️</button></td>
+                <td><button onClick={() => { setIsEditing(true); setEditId(s.id); setForm(s); }} className="btn btn-sm btn-outline">Edit</button> <button onClick={() => handleDelete(s.id)} className="btn btn-sm btn-danger">Hapus</button></td>
               </tr>
             ))}
           </tbody>
